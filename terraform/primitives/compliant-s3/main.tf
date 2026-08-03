@@ -36,7 +36,7 @@ resource "aws_s3_bucket" "primary" {
   bucket = local.primary_name
 }
 
-# terraform/primitives/compliant-s3/main.tf (continued)
+# terraform/primitives/compliant-s3/main.tf (PRIMARY BUCKET)
 
 # SC-28: Protection of information at rest.
 # AES-256 keeps this lab simple. The commented block below shows how you'd
@@ -76,7 +76,7 @@ resource "aws_s3_bucket_public_access_block" "primary" {
   restrict_public_buckets = true
 }
 
-# terraform/primitives/compliant-s3/main.tf (continued)
+# terraform/primitives/compliant-s3/main.tf (LOG BUCKET)
 
 # AU-3 / AU-6: Content of audit records + audit review.
 resource "aws_s3_bucket" "log" {
