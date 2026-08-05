@@ -1,11 +1,5 @@
 # Compliant GCS Bucket with Customer-Managed Encryption
 
-**Lab X.X — CGE-P** <!-- update lab number -->
-
-This module provisions a Google Cloud Storage bucket that enforces SC-12, SC-13, SC-28, AC-3, AU-11, and CM-6, using a customer-managed encryption key (CMEK) held in Cloud KMS.
-
----
-
 ## Overview
 
 This project definitely proved more difficult than the first. Up to this point I have had no experience with GCP, so it took a bit of figuring out to even get the `gcloud` CLI configured. From there, it seemed there were a lot of similarities to the first lab. The big differences were building different controls into the bucket and using a self-managed key for encryption.
