@@ -1,25 +1,51 @@
-This lab 2.5 "IaC as Compliance Evidence" is a great reminder of the capabilities of GRC Engineering. Controls can be built into infrastructure and proven but how do you show your work, including timestamping it and storing it in a tamper proof location.
+# Lab 2.5 — IaC as Compliance Evidence
 
-Through this lab, I learned how to create a hardened S3 bucket evidence vault that can't be deleted by anyone besides me, and ran a script that reads the plan, state file, and more to produce a piece of concrete zipped evidence that auditors can use.
+Lab 2.5 is a good reminder of what GRC Engineering is capable of. Controls can be built into infrastructure and proven from the code itself. But building the control is only half the job, the other half is showing your work: timestamping it, hashing it, and putting it in tamperproof storage.
 
-Lab 2.5 - IaC as Compliance Evidence
+Having built buckets in the earlier labs, this one went faster.
 
-Lab 2.5 is a good reminder of what GRC Engineering is capable of. Controls can be built into infrastructure and proven from the code itself. But building the control is only half the job, the other half is showing your work: timestamping it, hashing it, and putting it in a tamperproof storage location.
+---
 
-Having built buckets in the earlier labs, this one went faster. 
+## What I built
 
-What I built
+### Evidence vault
 
-An evidence vault — a hardened S3 bucket with Object Lock, versioning, SSE, a full public access block, and a bucket policy denying s3:DeleteBucket to everyone except account root. Object Lock has to be enabled at bucket creation; there's no retrofitting it.
+A hardened S3 bucket:
 
-capture-evidence.sh — reads a live Terraform workspace and pulls the plan, state, git commit, and Terraform version. Hashes each file into a SHA-256 manifest, zips the bundle, uploads it to the vault, and prints a JSON receipt with the version_id.
+- **Object Lock** — has to be enabled at bucket creation, there's no retrofitting it
+- **Versioning** — required by Object Lock
+- **SSE encryption** and a full **public access block**
+- **Bucket policy** denying `s3:DeleteBucket` to everyone except account root
 
-What I'm taking from it
+### `capture-evidence.sh`
 
-As an auditor, a screenshot tells me someone once saw a screen. A hashed, timestamped plan locked in a vault tells me integrity, attribution, and reproducibility. 
+Reads a live Terraform workspace and pulls:
 
-Artifacts
+| Artifact | Source |
+|---|---|
+| `plan.json` | `terraform show -json tfplan` |
+| `state.json` | `terraform state pull` |
+| `commit.txt` | `git log -1 --pretty=full` |
+| `version.txt` | `terraform version` |
+
+It hashes each file into a SHA-256 manifest, bundles them, uploads to the vault, and prints a JSON receipt with the `version_id`:
+
+```json
+{"run_id":"test-001","vault":"cgep-lab-grc-evidence-vault-XXXXXXXX","key":"runs/test-001/bundle.tar.gz","version_id":"<version-id>","captured_at_utc":"<timestamp>"}
+```
+
+---
+
+## What I'm taking from it
+
+As an auditor, I can tell from a screenshot that someone once saw a screen. A hashed, timestamped plan locked in a vault tells me integrity, attribution, and reproducibility.
+
+---
+
+## Artifacts
+
+```
 terraform/primitives/evidence-vault/
 scripts/capture-evidence.sh
 evidence/lab-2-5/receipt.json
-
+```
