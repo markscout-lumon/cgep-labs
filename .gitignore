@@ -10,4 +10,6 @@ crash.log
 
 # OS noise
 .DS_Store
-EOF
+
+# Editor
+.vscode/
