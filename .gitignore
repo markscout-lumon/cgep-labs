@@ -13,3 +13,4 @@ crash.log
 
 # Editor
 .vscode/
+.markdownlint.json
