@@ -21,6 +21,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Debug OIDC claims
+        run: |
+          echo "repository: ${{ github.repository }}"
+          echo "repository_owner: ${{ github.repository_owner }}"
+          echo "event_name: ${{ github.event_name }}"
+          echo "ref: ${{ github.ref }}"
+      
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -100,10 +107,3 @@ jobs:
           path: evidence/lab-4-3/
           retention-days: 90
 
-
-      - name: Debug OIDC claims
-        run: |
-          echo "repository: ${{ github.repository }}"
-          echo "repository_owner: ${{ github.repository_owner }}"
-          echo "event_name: ${{ github.event_name }}"
-          echo "ref: ${{ github.ref }}"
