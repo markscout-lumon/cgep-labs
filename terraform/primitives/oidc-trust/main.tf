@@ -28,7 +28,16 @@ resource "aws_iam_role" "grc_gate" {
       Action    = ["sts:AssumeRoleWithWebIdentity", "sts:TagSession"]
       Condition = {
         StringEquals = { "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com" }
-        StringLike   = { "token.actions.githubusercontent.com:sub" = "repo:${var.github_org}/${var.github_repo}:*" }
+        # This GitHub account has immutable-ID subject claims enabled, so the
+        # sub claim is "repo:OWNER@ownerId/REPO@repoId:*" instead of the
+        # classic "repo:OWNER/REPO:*". Match both so the trust scope stays
+        # limited to this one repo either way.
+        StringLike = {
+          "token.actions.githubusercontent.com:sub" = [
+            "repo:${var.github_org}/${var.github_repo}:*",
+            "repo:${var.github_org}@*/${var.github_repo}@*:*",
+          ]
+        }
       }
     }]
   })
