@@ -4,5 +4,4 @@
 # instead of a customer-managed KMS key. KMS-backed encryption is introduced
 # in a later lab (see the "KMS teaser" comment block in main.tf); AES256
 # satisfies SC-28 at-rest encryption for this stage of the course.
-exclude:
-  - aws-s3-encryption-customer-key
+aws-s3-encryption-customer-key

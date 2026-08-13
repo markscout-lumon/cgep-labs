@@ -38,10 +38,10 @@ jobs:
           curl -fsSL https://github.com/open-policy-agent/conftest/releases/download/v0.50.0/conftest_0.50.0_Linux_x86_64.tar.gz \
             | tar -xz -C /usr/local/bin conftest
 
-      - name: Install tfsec
+      - name: Install Trivy
         run: |
-          curl -fsSL https://github.com/aquasecurity/tfsec/releases/download/v1.28.14/tfsec-linux-amd64 \
-            -o /usr/local/bin/tfsec && chmod +x /usr/local/bin/tfsec
+          curl -fsSL https://github.com/aquasecurity/trivy/releases/download/v0.73.0/trivy_0.73.0_Linux-64bit.tar.gz \
+            | tar -xz -C /usr/local/bin trivy
 
       - name: Terraform plan
         working-directory: ${{ env.TF_WORKING_DIR }}
@@ -77,14 +77,14 @@ jobs:
           } > evidence/lab-4-3/conftest-results.json
           if [[ $EXIT -eq 0 ]]; then echo "conftest: PASS"; else echo "conftest: FAIL"; exit 1; fi
 
-      - name: tfsec scan
-        id: tfsec
+      - name: Trivy config scan
+        id: trivy
         if: always()
         run: |
           # Write SARIF for the artifact, then re-run with a severity floor so
-          # tfsec's own exit code is the gate (no JSON parsing required).
-          tfsec "$TF_WORKING_DIR" --config-file "$TF_WORKING_DIR/.tfsec/config.yml" --format sarif --out evidence/lab-4-3/tfsec.sarif || true
-          tfsec "$TF_WORKING_DIR" --config-file "$TF_WORKING_DIR/.tfsec/config.yml" --minimum-severity HIGH
+          # trivy's own exit code is the gate (no JSON parsing required).
+          trivy config "$TF_WORKING_DIR" --ignorefile "$TF_WORKING_DIR/.trivyignore" --format sarif --output evidence/lab-4-3/trivy.sarif || true
+          trivy config "$TF_WORKING_DIR" --ignorefile "$TF_WORKING_DIR/.trivyignore" --severity HIGH,CRITICAL --exit-code 1
 
       - name: Copy plan into evidence
         if: always()
