@@ -1,0 +1,7 @@
+# Suppressions for this lab's compliant-s3 module.
+#
+# aws-s3-encryption-customer-key: main.tf intentionally uses SSE-S3 (AES256)
+# instead of a customer-managed KMS key. KMS-backed encryption is introduced
+# in a later lab (see the "KMS teaser" comment block in main.tf); AES256
+# satisfies SC-28 at-rest encryption for this stage of the course.
+aws-s3-encryption-customer-key
