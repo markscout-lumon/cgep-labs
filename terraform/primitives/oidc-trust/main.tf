@@ -25,7 +25,7 @@ resource "aws_iam_role" "grc_gate" {
     Statement = [{
       Effect    = "Allow"
       Principal = { Federated = aws_iam_openid_connect_provider.github.arn }
-      Action    = "sts:AssumeRoleWithWebIdentity"
+      Action    = ["sts:AssumeRoleWithWebIdentity", "sts:TagSession"]
       Condition = {
         StringEquals = { "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com" }
         StringLike   = { "token.actions.githubusercontent.com:sub" = "repo:${var.github_org}/${var.github_repo}:*" }
