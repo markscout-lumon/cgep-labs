@@ -99,3 +99,11 @@ jobs:
           name: grc-evidence-${{ github.run_id }}
           path: evidence/lab-4-3/
           retention-days: 90
+
+
+      - name: Debug OIDC claims
+        run: |
+          echo "repository: ${{ github.repository }}"
+          echo "repository_owner: ${{ github.repository_owner }}"
+          echo "event_name: ${{ github.event_name }}"
+          echo "ref: ${{ github.ref }}"
