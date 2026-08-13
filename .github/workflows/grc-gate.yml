@@ -23,16 +23,10 @@ jobs:
 
       - name: DEBUG - decode OIDC token claims
         run: |
-          IDTOKEN=$(curl -sSL -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com" | python3 -c "import sys,json; print(json.load(sys.stdin)['value'])")
-          python3 -c "
-import base64, json, sys
-tok = '$IDTOKEN'.split('.')[1]
-tok += '=' * (-len(tok) % 4)
-claims = json.loads(base64.urlsafe_b64decode(tok))
-for k in ('aud','sub','repository','ref','event_name','repository_owner'):
-    print(f'{k}: {claims.get(k)}')
-"
+          IDTOKEN=$(curl -sSL -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com" | jq -r '.value')
+          PAYLOAD=$(echo "$IDTOKEN" | cut -d '.' -f2 | tr '_-' '/+')
+          case $(( ${#PAYLOAD} % 4 )) in 2) PAYLOAD="$PAYLOAD==";; 3) PAYLOAD="$PAYLOAD=";; esac
+          echo "$PAYLOAD" | base64 -d | jq '{aud, sub, repository, ref, event_name, repository_owner}'
 
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
