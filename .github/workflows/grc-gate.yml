@@ -146,8 +146,8 @@ jobs:
           mkdir -p evidence/lab-4-4
           cp receipt.json evidence/lab-4-4/receipt.json
 
-        - name: Enforce gate
-          if: always()
-          run: |
-            test "${{ steps.conftest.outcome }}" = "success" \
-              && test "${{ steps.trivy.outcome }}" = "success"
+      - name: Enforce gate
+        if: always()
+        run: |
+          test "${{ steps.conftest.outcome }}" = "success" \
+            && test "${{ steps.trivy.outcome }}" = "success"
