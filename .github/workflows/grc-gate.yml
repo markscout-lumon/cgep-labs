@@ -59,12 +59,6 @@ jobs:
             -var="project_name=cgep-lab" -var="environment=dev" | tee plan.txt
           terraform show -json tfplan > plan.json
 
-      - name: Enforce gate
-        if: always()
-        run: |
-          test "${{ steps.conftest.outcome }}" = "success" \
-            && test "${{ steps.trivy.outcome }}" = "success"
-
       - name: Conftest policy gate
         id: conftest
         run: |
@@ -151,3 +145,9 @@ jobs:
           aws s3 cp receipt.json "s3://${VAULT}/${KEY_PREFIX}/receipt.json"
           mkdir -p evidence/lab-4-4
           cp receipt.json evidence/lab-4-4/receipt.json
+
+        - name: Enforce gate
+          if: always()
+          run: |
+            test "${{ steps.conftest.outcome }}" = "success" \
+              && test "${{ steps.trivy.outcome }}" = "success"
